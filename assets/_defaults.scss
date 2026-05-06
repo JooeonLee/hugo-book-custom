@@ -2,95 +2,115 @@
 $padding-1: 1px !default;
 $padding-4: 0.25rem !default;
 $padding-8: 0.5rem !default;
+$padding-12: 0.75rem !default;
 $padding-16: 1rem !default;
+$padding-20: 1.25rem !default;
+$padding-24: 1.5rem !default;
+$padding-32: 2rem !default;
+$padding-40: 2.5rem !default;
+$padding-48: 3rem !default;
+$padding-64: 4rem !default;
+
+$font-size-base: 16px !default;
+$font-size-12: 0.75rem !default;
+$font-size-14: 0.875rem !default;
+$font-size-16: 1rem !default;
+$font-size-18: 1.125rem !default;
+$font-size-20: 1.25rem !default;
+$font-size-24: 1.5rem !default;
+$font-size-32: 2rem !default;
+$font-size-40: 2.5rem !default;
+
+$border-radius: $padding-4 !default;
+
+$body-font-weight: normal !default;
 
 $body-min-width: 20rem !default;
-$container-max-width: 90rem !default;
+$body-max-width: 48rem !default;
+$body-wide-width: 56rem !default;
+$container-max-width: 80rem !default;
 
 $menu-width: 16rem !default;
 $toc-width: 16rem !default;
 
-$mobile-breakpoint: $menu-width + $body-min-width * 1.2 + $toc-width !default;
+$wide-breakpoint: $menu-width + $body-wide-width * 1.1 + $toc-width !default;
+$toc-breakpoint: $menu-width + $body-max-width * 1.1 + $toc-width !default;
+$menu-breakpoint: $menu-width + $body-max-width * 1.3 !default;
+$narrow-breakpoint: ($body-min-width + $body-max-width) / 2;
 
-:root {
-  --font-size: 16px;
-  --font-size-smaller: 0.875rem;
-  --font-size-smallest: 0.75rem;
+$preview-width: 200px;
+$preview-height: 170px;
+$preview-mobile-width: 160px;
+$preview-mobile-height: 160px;
 
-  --body-font-weight: 400;
-  --body-background: white;
-  --body-background-tint: transparent;
-  --body-font-color: black;
+$hint-colors: (
+  default: #64748b,
+  info: #4486dd,
+  success: #3bad3b,
+  warning: #f59e42,
+  danger: #d84747,
 
-  --border-radius: 0.25rem;
-}
-
-// Convenience mixing to declare a color and a transparent tint
-@mixin accent($name, $color, $tint: 0.1) {
-  --color-accent-#{$name}: #{$color};
-  --color-accent-#{$name}-tint: #{rgba($color, $tint)};
-}
+  note: #4486dd,
+  tip: #3bad3b,
+  important: #8144dd,
+  caution: #d84747
+) !default;
 
 // Themes
-@mixin theme-light { // made to look like 'browser default'
-  --body-background: white;
-  --body-background-tint: none;
-  --body-font-color: black;
+@mixin theme-light {
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #c7cfd3;
+  --gray-500: #6f767e;
+  --gray-800: #495057;
 
   --color-link: #0055bb;
   --color-visited-link: #5500bb;
+  --color-page-link: #adb5bd;
+  --color-social-link: #fff;
+  --link-background: rgba(0, 85, 187, 0.1);
+
+  --body-background: white;
+  --body-font-color: black;
+
+  --toc-font-color: black;
+  --toc-active-color: black;
 
   --icon-filter: none;
+  --box-shadow: rgba(0, 0, 0, 0.1);
+  --lineno-font-color: rgba(0, 0, 0, 0.5);
 
-  --gray-100: #f8f9fa;
-  --gray-200: #e9ecef;
-  --gray-500: #adb5bd;
-
-  @include accent("default", #64748b);
-  @include accent("note", #4486dd);
-  @include accent("tip", #3bad3b);
-  @include accent("important", #8144dd);
-  @include accent("warning", #f59e42);
-  @include accent("caution", #d84747);
-
-  // Fallback for {{< hint >}} shortcodes
-  @include accent("info", #4486dd);
-  @include accent("success", #3bad3b);
-  @include accent("danger", #d84747);
+  --data-thead-color: #d1d5db;
+  --data-tbody-odd: rgba(255, 255, 255, 0.3);
+  --data-tbody-even: rgba(248, 249, 250, 0.5);
+  --data-tbody-hover: rgba(233, 236, 239, 0.8);
 }
 
-@mixin theme-dark { // based on https://www.nordtheme.com/
-  --body-background: #2e3440;
-  --body-background-tint: none;
+@mixin theme-dark {
+  --gray-100: #23272a;
+  --gray-200: #2d3339;
+  --gray-300: #3d444a;
+  --gray-500: #6c757d;
+  --gray-800: #adb5bd;
 
-  --body-font-color: #eceff4;
+  --color-link: #8ecfff;
+  --color-visited-link: #a7aaff;
+  --color-page-link: black;
+  --color-social-link: #222;
+  --link-background: rgba(0, 85, 187, 0.1);
 
-  --color-link: #81a1c1;
-  --color-visited-link: #81a1c1;
+  --body-background: #181a1b;
+  --body-font-color: #f5f6fa;
+
+  --toc-font-color: #acacac;
+  --toc-active-color: white;
 
   --icon-filter: brightness(0) invert(1);
+  --box-shadow: rgba(255, 255, 255, 0.1);
+  --lineno-font-color: rgba(255, 255, 255, 0.5);
 
-  --gray-100: #3b4252;
-  --gray-200: #434c5e;
-  --gray-500: #d8dee9;
-
-  @include accent("default", #81a1c1);
-  @include accent("note", #5e81ac);
-  @include accent("tip", #a3be8c);
-  @include accent("important", #b48ead);
-  @include accent("warning", #d08770);
-  @include accent("caution", #bf616a);
-
-  // Fallback for {{< hint >}} shortcodes
-  @include accent("info", #5e81ac);
-  @include accent("success", #a3be8c);
-  @include accent("danger", #bf616a);
-}
-
-@mixin theme-auto {
-  @include theme-light;
-
-  @media (prefers-color-scheme: dark) {
-    @include theme-dark;
-  }
+  --data-thead-color: #2d3748;
+  --data-tbody-odd: rgba(0, 0, 0, 0.2);
+  --data-tbody-even: rgba(52, 58, 64, 0.3);
+  --data-tbody-hover: rgba(73, 80, 87, 0.5);
 }
