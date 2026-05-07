@@ -1,0 +1,20 @@
+// 기본 라이트 테마
+:root {
+  @include theme-light;
+}
+
+// data-theme 속성에 따른 테마 전환
+[data-theme="dark"] {
+  @include theme-dark;
+}
+
+[data-theme="light"] {
+  @include theme-light;
+}
+
+// 시스템 다크모드 감지 (data-theme 없을 때만)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-dark;
+  }
+}

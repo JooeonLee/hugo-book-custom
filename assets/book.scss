@@ -13,7 +13,5 @@
 // Custom defined styles, theme mixins also placed there
 @import "custom";
 
-// Select theme mixing based on site parameter
-:root {
-  @include theme-{{ default "light" .Site.Params.BookTheme }};
-}
+// @import "themes/{{ default "light" .Site.Params.BookTheme }}";
+@import "themes/auto";
