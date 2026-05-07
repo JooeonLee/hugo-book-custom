@@ -15,3 +15,6 @@
         return str.replace(/[\x00-\x7F]/g, '').split('');
       }
     }
+
+- id: Expand
+  translation: Expand
