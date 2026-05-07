@@ -1,18 +1,62 @@
-<div class="flex flex-wrap justify-between">
-  <div>
-  {{ with .NextInSection }}
-    <a href="{{ .RelPermalink }}" class="flex align-center">
-      <img src="{{ partial "docs/icon" "backward" }}" class="book-icon" alt="{{ partial "docs/text/i18n" "Backward" }}" />
-      <span>{{ partial "docs/title" . }}</span>
-    </a>
+{{ $currentCategories := partial "categories/value" .Params.categories }}
+{{ $currentPage := . }}
+
+{{/* Initialize empty slice to collect pages with matching categories */}}
+{{ $pages := slice }}
+
+{{ range where .Site.RegularPages "Section" .Section }}
+  {{ $pageCategories := partial "categories/value" .Params.categories }}
+
+  {{/* Match pages with identical category strings */}}
+  {{ if eq $currentCategories $pageCategories }}
+    {{ $pages = $pages | append . }}
   {{ end }}
-  </div>
-  <div>
-  {{ with .PrevInSection }}
-    <a href="{{ .RelPermalink }}" class="flex align-center">
-      <span>{{ partial "docs/title" . }}</span>
-      <img src="{{ partial "docs/icon" "forward" }}" class="book-icon" alt="{{ partial "docs/text/i18n" "Forward" }}" />
-    </a>
+{{ end }}
+
+{{/* Initialize prev/next page references */}}
+{{ $prev := "" }}
+{{ $next := "" }}
+{{ $matches := false }}
+
+{{/* Find current page position in filtered pages to determine adjacent pages */}}
+{{ range $index, $page := $pages }}
+  {{ if eq $page.RelPermalink $currentPage.RelPermalink }}
+    {{ $matches = true }}
+
+    {{/* Set next page if not at the end of the collection */}}
+    {{ if lt $index (sub (len $pages) 1) }}
+      {{ $prev = index $pages (add $index 1) }}
+    {{ end }}
+
+    {{/* Set previous page if not at the beginning of the collection */}}
+    {{ if gt $index 0 }}
+      {{ $next = index $pages (sub $index 1) }}
+    {{ end }}
   {{ end }}
-  </div>
+{{ end }}
+
+<div class="post-navigation">
+  {{ with $prev }}
+  <a href="{{ .RelPermalink }}" class="post-nav-link post-nav-prev">
+    <span class="post-nav-direction"><i class="fa-solid fa-backward"></i> PREV</span>
+    <span class="post-nav-title">{{ partial "docs/title" . }}</span>
+  </a>
+  {{ else }}
+  <a href="" class="post-nav-link post-nav-prev post-nav-disabled">
+    <span class="post-nav-direction"><i class="fa-solid fa-backward"></i> PREV</span>
+    <span class="post-nav-title">이전 게시글이 없습니다</span>
+  </a>
+  {{ end }}
+
+  {{ with $next }}
+  <a href="{{ .RelPermalink }}" class="post-nav-link post-nav-next">
+    <span class="post-nav-direction">NEXT <i class="fa-solid fa-forward"></i></span>
+    <span class="post-nav-title">{{ partial "docs/title" . }}</span>
+  </a>
+  {{ else }}
+  <a href="" class="post-nav-link post-nav-next post-nav-disabled">
+    <span class="post-nav-direction">NEXT <i class="fa-solid fa-forward"></i></span>
+    <span class="post-nav-title">다음 게시글이 없습니다</span>
+  </a>
+  {{ end }}
 </div>
