@@ -1,0 +1,38 @@
+{{- $src_left := .Get "src-left" -}}
+{{- $alt_left := .Get "alt-left" -}}
+{{- $src_right := .Get "src-right" -}}
+{{- $alt_right := .Get "alt-right" -}}
+{{- $width_ratio := .Get "width-ratio" | default 0.5 -}}
+{{- $href_left := .Get "href-left" -}}
+{{- $href_right := .Get "href-right" -}}
+{{- $target := .Get "target" | default "_blank" -}}
+{{- $align := .Get "align" | default "center" -}}
+
+{{- $left_percent := mul $width_ratio 100 -}}
+{{- $right_percent := sub 100 $left_percent -}}
+
+<div style="text-align: {{ $align }}; display: flex; gap: 0.5rem; align-items: flex-start; flex-wrap: nowrap;">
+  <div style="flex: 0 0 {{ $left_percent }}%; max-width: {{ $left_percent }}%;">
+    {{- if $href_left -}}
+    <a href="{{ $href_left }}" target="{{ $target }}">
+    {{- end -}}
+    <img src="{{ $src_left }}"
+      {{- with $alt_left }} alt="{{ . }}"{{ end -}}
+      style="width: 100%; height: auto; display: block;">
+    {{- if $href_left -}}
+    </a>
+    {{- end -}}
+  </div>
+  
+  <div style="flex: 0 0 {{ $right_percent }}%; max-width: {{ $right_percent }}%;">
+    {{- if $href_right -}}
+    <a href="{{ $href_right }}" target="{{ $target }}">
+    {{- end -}}
+    <img src="{{ $src_right }}"
+      {{- with $alt_right }} alt="{{ . }}"{{ end -}}
+      style="width: 100%; height: auto; display: block;">
+    {{- if $href_right -}}
+    </a>
+    {{- end -}}
+  </div>
+</div>

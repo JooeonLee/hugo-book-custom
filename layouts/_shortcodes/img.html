@@ -1,0 +1,25 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- $width := .Get "width" | default "100%" -}}
+{{- $min_width := .Get "min-width" -}}
+{{- $max_width := .Get "max-width" -}}
+{{- $align := .Get "align" -}}
+{{- $href := .Get "href" -}}
+{{- $target := .Get "target" | default "_blank" -}}
+
+<div
+  {{- with $align }} style="text-align: {{ . }};"{{ end -}}>
+  {{- if $href -}}
+  <a href="{{ $href }}" target="{{ $target }}">
+  {{- end -}}
+  <img src="{{ $src }}"
+    {{- with $alt }} alt="{{ . }}"{{ end -}}
+    style="
+      {{- with $width }}width: {{ . }}; {{ end -}}
+      {{- with $min_width }}min-width: {{ . }}; {{ end -}}
+      {{- with $max_width }}max-width: {{ . }}; {{ end -}}
+    ">
+  {{- if $href -}}
+  </a>
+  {{- end -}}
+</div>
