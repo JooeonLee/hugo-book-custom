@@ -1,11 +1,11 @@
 <div class="sidebar-profile">
   <div class="profile-img-wrap">
     <a href="{{ .Site.BaseURL }}">
-      <img src="{{ .Site.Params.BookMenu.profileImage }}" alt="Profile" class="profile-img" />
+      <img src="{{ .Site.Params.bookmenu.profileimage }}" alt="Profile" class="profile-img" />
     </a>
   </div>
   <div class="sidebar-social">
-    <a href="{{ .Site.Params.BookMenu.githubLink }}" target="_blank" title="GitHub" {{ if not .Site.Params.BookMenu.githubLink }}class="disabled"{{ end }}>
+    <a href="{{ .Site.Params.bookmenu.githublink }}" target="_blank" title="GitHub" {{ if not .Site.Params.BookMenu.githubLink }}class="disabled"{{ end }}>
       <i class="fa-brands fa-github"></i>
     </a>
     <a href="{{ "/categories/" | relURL }}" title="Categories">
