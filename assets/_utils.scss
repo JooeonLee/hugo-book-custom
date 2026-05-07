@@ -70,6 +70,12 @@ input.toggle {
   position: absolute;
 }
 
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 @mixin spin($duration) {
   animation: spin $duration ease infinite;
   @keyframes spin {
@@ -88,6 +94,6 @@ input.toggle {
 }
 
 @mixin outline {
-  outline-style: auto;
-  outline-color: var(--color-link);
+  outline-color: currentColor;
+  outline-color: -webkit-focus-ring-color;
 }
