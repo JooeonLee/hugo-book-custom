@@ -1,0 +1,26 @@
+{{ define "main" }}
+<article class="markdown book-article">
+  <div class="search-header">
+    <h1>검색 결과</h1>
+    <div class="search-query-info">
+      <p id="search-query-display"></p>
+    </div>
+  </div>
+
+  <div id="search-no-results" class="search-no-results hidden">
+    <p>검색 결과가 없습니다.</p>
+  </div>
+
+  <div class="search-base" style="display: none;">
+    {{- $pages := where .Site.RegularPages "Section" "posts" -}}
+    {{- $pages = where $pages "Params.bookSearchExclude" "!=" true -}}
+    {{- range $pages.ByDate.Reverse -}}
+      {{ partial "docs/post-item.html" . }}
+    {{- end -}}
+  </div>
+
+  <div class="post-list search-results"></div>
+
+  <div id="search-pagination"></div>
+</article>
+{{ end }}

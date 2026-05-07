@@ -1,0 +1,58 @@
+{{ define "main" }}
+<article class="markdown book-article">
+
+  {{ $currentCategory := partial "categories/value-first" (slice .Title) }}
+  {{ $pages := slice }}
+  {{ $subCategories := slice }}
+
+  {{ range where .Site.RegularPages "Section" "posts" }}
+    {{ $pageCategory := partial "categories/value-first" .Params.categories }}
+
+    {{ if eq $currentCategory $pageCategory }}
+      {{ $pages = $pages | append . }}
+      {{ $subCategory := partial "categories/value-second" .Params.categories }}
+      {{ if not (in $subCategories $subCategory) }}
+        {{ $subCategories = $subCategories | append $subCategory }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  <div class="list-header">
+    <h1><i class="fa-solid fa-folder"></i> {{ .Title }}</h1>
+    <p>전체 글 <em class="list-count">{{ len $pages }}</em></p>
+  </div>
+
+  {{ if $subCategories }}
+  <div class="categories-section">
+    <h2>하위 카테고리</h2>
+    <div class="category-chips">
+      {{ range $subCategory := $subCategories }}
+      <div class="category-item">
+        <a href="{{ "/categories/" | relURL }}{{ $currentCategory | urlize }}/{{ $subCategory | urlize }}" class="category-link">
+          <span class="category-name"><i class="fa-solid fa-file"></i> {{ $subCategory }}</span>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
+
+  {{ if $pages }}
+  <div class="post-list">
+    {{ $paginate := .Paginate $pages 10 }}
+    <div class="post-list">
+      {{ range $paginate.Pages }}
+        {{ partial "docs/post-item.html" . }}
+      {{ end }}
+    </div>
+
+    {{ partial "docs/pagination.html" $paginate }}
+  </div>
+  {{ else }}
+  <div class="post-list empty-list">
+    <p>이 카테고리에 게시글이 없습니다.</p>
+  </div>
+  {{ end }}
+
+</article>
+{{ end }}

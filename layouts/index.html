@@ -1,0 +1,18 @@
+{{ define "main" }}
+<article class="markdown book-article">
+  <div class="list-header">
+    <h1><a href="{{ .Site.BaseURL }}" class="site-title">{{ .Site.Title }}</a></h1>
+    <p>전체 글 <em class="list-count">{{ len (where .Site.RegularPages "Section" "posts") }}</em></p>
+  </div>
+
+  {{ $paginate := .Paginate (where .Site.RegularPages "Section" "posts") 10 }}
+
+  <div class="post-list">
+    {{ range $paginate.Pages }}
+      {{ partial "docs/post-item.html" . }}
+    {{ end }}
+  </div>
+
+  {{ partial "docs/pagination.html" $paginate }}
+</article>
+{{ end }}
