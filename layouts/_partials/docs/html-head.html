@@ -4,18 +4,74 @@ https://github.com/alex-shpak/hugo-book
 {{ "-->" | safeHTML }}
 
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="{{ or .Description .Summary | plainify | htmlUnescape }}">
+{{- if hugo.IsProduction | and (ne .Params.robotsNoIndex true) }}
+<meta name="robots" content="index, follow">
+{{- else }}
+<meta name="robots" content="noindex, nofollow">
+{{- end }}
+
+{{- if .IsHome }}
+{{ with site.Params.keywords -}}
+<meta name="keywords" content="{{- range $i, $e := . }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}">
+{{ end }}
+{{- else }}
+<meta name="keywords" content="{{ if .Params.keywords -}}
+    {{- range $i, $e := .Params.keywords }}{{ if $i }}, {{ end }}{{ $e }}{{ end }} {{- else }}
+    {{- range $i, $e := .Params.tags }}{{ if $i }}, {{ end }}{{ $e }}{{ end }} {{- end -}}">
+{{- end }}
+
+{{- $description := "" }}
+{{- if .Description }}
+  {{- $description = .Description }}
+{{- else if .IsPage }}
+  {{- $description = .Summary }}
+{{- else if site.Params.description }}
+  {{- $description = site.Params.description }}
+{{- end }}
+<meta name="description" content="{{ $description | plainify | replaceRE `\s+` " " | truncate 100 }}">
+
+<meta name="author" content="{{ (partial "docs/author.html" . ) }}">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark">
+
+<link rel="canonical" href="{{ if .Params.canonicalURL -}} {{ trim .Params.canonicalURL " " }} {{- else -}} {{ .Permalink }} {{- end }}">
+
+{{- /* Favicons */}}
+<link rel="icon" href="{{ site.Params.assets.favicon | default "favicon.ico" | absURL }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ site.Params.assets.favicon16x16 | default "favicon-16x16.png" | absURL }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ site.Params.assets.favicon32x32 | default "favicon-32x32.png" | absURL }}">
+<link rel="apple-touch-icon" href="{{ site.Params.assets.apple_touch_icon | default "apple-touch-icon.png" | absURL }}">
+<link rel="mask-icon" href="{{ site.Params.assets.safari_pinned_tab | default "safari-pinned-tab.svg" | absURL }}">
+
+<!-- Search Engine Verification Tags -->
+{{- with .Site.Params.SearchEngine.google.SiteVerificationTag }}
+<meta name="google-site-verification" content="{{ . }}" />
+{{- end }}
+{{- with .Site.Params.SearchEngine.naver.SiteVerificationTag }}
+<meta name="naver-site-verification" content="{{ . }}" />
+{{- end }}
+{{- with .Site.Params.SearchEngine.bing.SiteVerificationTag }}
+<meta name="msvalidate.01" content="{{ . }}" />
+{{- end }}
+{{- with .Site.Params.SearchEngine.yandex.SiteVerificationTag }}
+<meta name="yandex-verification" content="{{ . }}" />
+{{- end }}
 
 {{- with .Page.Params.BookHref -}}
   <meta http-equiv="Refresh" content="0; url='{{ . }}'" />
 {{- end -}}
 
-{{ partial "opengraph.html" . }}
-{{ partial "schema.html" . }}
+{{- /* SEO: OpenGraph tags */ -}}
+{{- partial "docs/seo/opengraph.html" . -}}
+
+{{- /* SEO: Twitter Cards */ -}}
+{{- partial "docs/seo/twitter_cards.html" . -}}
+
+{{- /* SEO: Schema.org JSON-LD */ -}}
+{{- partial "docs/seo/schema_json.html" . -}}
 
 <title>{{ partial "docs/html-head-title" . }}</title>
 {{ partial "docs/html-head-favicon" . }}
@@ -25,7 +81,7 @@ https://github.com/alex-shpak/hugo-book
 <link rel="canonical" href="{{ .Permalink }}">
 
 {{- range .Translations }}
-  <link rel="alternate" hreflang="{{ default .Site.Language.Locale .Language.Name }}" href="{{ .Permalink }}" title="{{ partial "docs/title" . }}">
+  <link rel="alternate" hreflang="{{ default .Site.LanguageCode .Language.Lang }}" href="{{ .Permalink }}" title="{{ partial "docs/title" . }}">
 {{- end -}}
 
 <!-- Theme stylesheet, you can customize scss by creating `assets/custom.scss` in your website -->
@@ -34,10 +90,25 @@ https://github.com/alex-shpak/hugo-book
 
 <!-- Search -->
 {{- if default true .Site.Params.BookSearch -}}
-  {{- $searchJSFile := printf "%s.search.js" .Language.Name }}
-  {{- $searchJS := resources.Get "search.js" | resources.ExecuteAsTemplate $searchJSFile . | resources.Minify | resources.Fingerprint }}
+  <!-- Search Data -->
+  {{- $searchData := resources.Get "search/data.json" | resources.ExecuteAsTemplate "search/data.json" . | resources.Minify | resources.Fingerprint }}
+  <link rel="preload" href="{{ $searchData.RelPermalink }}" as="fetch" crossorigin>
+  <script>
+    window.SEARCH_DATA_URL = "{{ $searchData.RelPermalink }}";
+  </script>
+
+  <!-- Search Fuse -->
+  {{- $searchFuseJS := resources.Get "search/fuse.js" | resources.ExecuteAsTemplate "search/fuse.js" . | resources.Minify | resources.Fingerprint }}
   <script defer src="{{ "fuse.min.js" | relURL }}"></script>
-  <script defer src="{{ partial "docs/links/resource-precache" $searchJS }}" {{ template "integrity" $searchJS }}></script>
+  <script defer src="{{ partial "docs/links/resource-precache" $searchFuseJS }}" {{ template "integrity" $searchFuseJS }}></script>
+
+  <!-- Search Input -->
+  {{- $searchInputJS := resources.Get "search/input.js" | resources.ExecuteAsTemplate "search/input.js" . | resources.Minify | resources.Fingerprint }}
+  <script defer src="{{ partial "docs/links/resource-precache" $searchInputJS }}" {{ template "integrity" $searchInputJS }}></script>
+
+  <!-- Search List -->
+  {{- $searchListJS := resources.Get "search/list.js" | resources.ExecuteAsTemplate "search/list.js" . | resources.Minify | resources.Fingerprint }}
+  <script defer src="{{ partial "docs/links/resource-precache" $searchListJS }}" {{ template "integrity" $searchListJS }}></script>
 {{ end -}}
 
 <!-- Service Worker -->
@@ -46,7 +117,16 @@ https://github.com/alex-shpak/hugo-book
   <script defer src="{{ $swJS.RelPermalink }}" {{ template "integrity" $swJS }}></script>
 {{ end -}}
 
-{{ partial "google_analytics.html" . }}
+<!-- Google Analytics -->
+{{- if and hugo.IsProduction .Site.Params.GoogleAnalytics.tagId }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.GoogleAnalytics.tagId }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ .Site.Params.GoogleAnalytics.tagId }}');
+</script>
+{{- end -}}
 
 <!-- RSS -->
 {{- with .OutputFormats.Get "rss" -}}
@@ -58,3 +138,31 @@ https://github.com/alex-shpak/hugo-book
     integrity="{{ .Data.Integrity }}" crossorigin="anonymous"
   {{- end -}}
 {{- end -}}
+
+<!-- Font Awesome -->
+<!-- https://fontawesome.com/icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
+
+<!-- Scroll Progress Bar -->
+{{- $scrollProgressJS := resources.Get "scroll-progress.js" | resources.ExecuteAsTemplate "scroll-progress.js" . | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ partial "docs/links/resource-precache" $scrollProgressJS }}" {{ template "integrity" $scrollProgressJS }}></script>
+
+<!-- Dark Mode Toggle -->
+{{- $darkModeJS := resources.Get "dark-mode.js" | resources.ExecuteAsTemplate "dark-mode.js" . | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ partial "docs/links/resource-precache" $darkModeJS }}" {{ template "integrity" $darkModeJS }}></script>
+
+<!-- Highlight.js -->
+<!-- https://highlightjs.org/ -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/xcode.min.css"> // [data-theme="light"] -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/vs2015.min.css"> // [data-theme="dark"] -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<!-- https://github.com/wcoder/highlightjs-line-numbers.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script>
+
+<!-- Code Copy -->
+{{- $copyCodeJS := resources.Get "copy-code.js" | resources.ExecuteAsTemplate "copy-code.js" . | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ partial "docs/links/resource-precache" $copyCodeJS }}" {{ template "integrity" $copyCodeJS }}></script>
+
+<!-- ToC Highlight -->
+{{- $tocHighlightJS := resources.Get "toc-highlight.js" | resources.ExecuteAsTemplate "toc-highlightjs" . | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ partial "docs/links/resource-precache" $tocHighlightJS }}" {{ template "integrity" $tocHighlightJS }}></script>
