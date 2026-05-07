@@ -7,6 +7,9 @@
 - id: Last modified by
   translation: Last modified by
 
+- id: Expand
+  translation: Expand
+
 - id: bookSearchConfig
   translation: |
     {
@@ -15,6 +18,3 @@
         return str.replace(/[\x00-\x7F]/g, '').split('');
       }
     }
-
-- id: Expand
-  translation: Expand

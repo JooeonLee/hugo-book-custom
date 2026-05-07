@@ -12,6 +12,3 @@
 
 - id: Tags
   translation: Етикети
-
-- id: bookSearchConfig
-  translation: '{ cache: true }'
