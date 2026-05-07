@@ -1,13 +1,15 @@
 <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="{{ partial "docs/icon" "menu" }}" class="book-icon" alt="{{ partial "docs/text/i18n" "Menu" }}" />
+    <i class="fa-solid fa-bars book-icon" id="menu-icon"></i>
   </label>
 
-  <h3>{{ partial "docs/title" . }}</h3>
+  <h3>
+    <a href="{{ .Site.BaseURL }}" class="site-title">{{ .Site.Title }}</a>
+  </h3>
 
   <label for="toc-control">
     {{ if partial "docs/toc-show" . }}
-    <img src="{{ partial "docs/icon" "toc" }}" class="book-icon" alt="{{ partial "docs/text/i18n" "Table of Contents" }}" />
+    <i class="fa-solid fa-list book-icon" id="toc-icon"></i>
     {{ end }}
   </label>
 </div>
