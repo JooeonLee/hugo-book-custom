@@ -1,0 +1,25 @@
+{{ if default true .Site.Params.BookSearch }}
+<div class="book-search hidden">
+  <div class="search-input-container">
+    <input type="text" id="book-search-input"
+      placeholder="{{ i18n "Search" }}" aria-label="{{ i18n "Search" }}"
+      maxlength="64" data-hotkeys="s/" onkeydown="if(event.key==='Enter') goToSearchPage()" />
+    <button type="button" id="book-search-button" class="book-search-btn" onclick="goToSearchPage()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+  </div>
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>
+document.querySelector(".book-search").classList.remove("hidden");
+
+function goToSearchPage() {
+  const searchInput = document.getElementById('book-search-input');
+  const query = searchInput.value.trim();
+  if (query) {
+    window.location.href = '/search/?q=' + encodeURIComponent(query);
+  }
+}
+</script>
+{{ end }}

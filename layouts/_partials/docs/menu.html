@@ -1,6 +1,10 @@
 <nav>
 {{ partial "docs/brand" . }}
-{{ partial "docs/search" . }}
+{{ partial "search/input" . }}
+{{ partial "categories/menu" . }}
+{{ if default false .Site.Params.BookMenu.recentPosts }}
+  {{ partial "docs/recent-posts" . }}
+{{ end }}
 {{ if hugo.IsMultilingual }}
   {{ partial "docs/languages" . }}
 {{ end }}

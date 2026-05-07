@@ -1,0 +1,24 @@
+{{ $recentPosts := where .Site.RegularPages "Section" "posts" | first 5 }}
+{{ if $recentPosts }}
+<div class="recent-posts">
+  <div class="recent-posts-header">
+    <i class="fa-solid fa-clock"></i>
+    <span>최신글</span>
+  </div>
+
+  <ul class="recent-posts-list">
+    {{ range $recentPosts }}
+    <li class="recent-post-item">
+      <a href="{{ .RelPermalink }}" title="{{ .Title }}">
+        <div class="recent-post-title">{{ .Title }}</div>
+        <div class="recent-post-date">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date.Format "2006.01.02" }}
+          </time>
+        </div>
+      </a>
+    </li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}
