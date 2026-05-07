@@ -1,7 +1,29 @@
+<div class="sidebar-profile">
+  <div class="profile-img-wrap">
+    <a href="{{ .Site.BaseURL }}">
+      <img src="{{ .Site.Params.BookMenu.profileImage }}" alt="Profile" class="profile-img" />
+    </a>
+  </div>
+  <div class="sidebar-social">
+    <a href="{{ .Site.Params.BookMenu.githubLink }}" target="_blank" title="GitHub" {{ if not .Site.Params.BookMenu.githubLink }}class="disabled"{{ end }}>
+      <i class="fa-brands fa-github"></i>
+    </a>
+    <a href="{{ "/categories/" | relURL }}" title="Categories">
+      <i class="fa-solid fa-folder"></i>
+    </a>
+    <a href="{{ "/tags/" | relURL }}" title="Tags">
+      <i class="fa-solid fa-tags"></i>
+    </a>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+      <i class="fa-solid fa-circle-half-stroke"></i>
+    </button>
+  </div>
+</div>
+
 <h2 class="book-brand">
   <a class="flex align-center" href="{{ cond (not .Site.Home.File) .Sites.Default.Home.RelPermalink .Site.Home.RelPermalink }}">
     {{- with .Site.Params.BookLogo -}}
-    <img src="{{ . | relURL }}" alt="{{ partial "docs/text/i18n" "Logo" }}" />
+    <img src="{{ . | relURL }}" alt="Logo" />
     {{- end -}}
     <span>{{ .Site.Title }}</span>
   </a>
