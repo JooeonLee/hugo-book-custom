@@ -1,0 +1,5 @@
+{{ if .Params.cover }}
+<div class="book-cover">
+  <img src="{{ .Params.cover | absURL }}" alt="Cover Image" class="book-cover-img">
+</div>
+{{ end }}

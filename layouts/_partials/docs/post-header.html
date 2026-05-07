@@ -1,0 +1,23 @@
+{{ if eq .Section "posts" }}
+<header class="post-header">
+
+  {{ if .Params.categories }}
+  <div class="post-header-category">
+    {{ $categories := partial "categories/value" .Params.categories }}
+    <a href="{{ "/categories/" | relURL }}{{ $categories | urlize }}/" class="post-header-category-link">
+      {{ $categories }}
+    </a>
+  </div>
+  {{ end }}
+
+  <h1 class="post-header-title">{{ .Title }}</h1>
+
+  {{ with .Date }}
+  <div class="post-header-date">
+    <time datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+      {{ .Format "2006. 1. 2. 15:04" }}
+    </time>
+  </div>
+  {{ end }}
+</header>
+{{ end }}
